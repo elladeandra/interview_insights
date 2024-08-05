@@ -32,7 +32,15 @@ def transcribe_audio(file_path):
             response_format="text"
         )
     return response
-
+def text_to_speech(text, filename):
+    if not os.path.exists(filename):
+        response = client.audio.speech.create(
+            model="tts-1",
+            input=text,
+            voice="shimmer"
+        )
+        response.write_to_file(filename)
+    return filename
 # This function is used to download audio from a given URL
 def download_audio(url):
     headers = {
@@ -249,5 +257,6 @@ def main():
     
     st.markdown("Created and Presented to you by Ella and Asantewaa: We are girls in STEM 👯‍♀️")
 
+# Run the main function if the script is executed directly
 if __name__ == "__main__":
     main()
