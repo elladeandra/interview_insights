@@ -148,28 +148,32 @@ def view_insights():
         job_description = st.session_state.job_description
         transcript = st.session_state.transcript
         
-        st.write(f"### Transcript")
-        st.write(transcript[:200] + "...")
+        with st.expander(f"### Transcript"):
+            st.write(transcript[:500] + "...")
+        st.divider()
         with st.spinner("Generating insights..."):
             insights = generate_insights(transcript, job_description)
-            st.write("**Insights:**")
-            st.write(insights)
-            
+            with st.expander("### Insights"):
+                st.write(insights)
+            st.divider()
             # Follow-up questions section
             st.write("### Follow-up Questions")
             follow_up_question = st.text_input("Ask a follow-up question:")
             if follow_up_question:
                 with st.spinner("Generating answer..."):
                     answer = ask_follow_up_question(transcript, follow_up_question)
-                    st.write("**Answer:**")
+                    st.write("#### Answer to Follow Up")
+                    st.divider()
                     st.write(answer)
     else:
         st.text("Please upload audio files to view insights.")
 
 def unique_insights():
     if 'unique_insights' in st.session_state and st.session_state.unique_insights:
-        st.subheader("Unique Insights")
-        st.write(st.session_state.unique_insights)
+        st.write("## Detailed Candidate Insights")
+        with st.expander("## Unique Insights"):
+
+            st.write(st.session_state.unique_insights)
     else:
         st.text("No unique insights available. Please upload and transcribe audio files first.")
 
@@ -204,6 +208,8 @@ def main():
     st.session_state.job_description = st.text_input("Enter the job description for the position:")
     
     upload_or_link_audio()
+
+    st.divider()
     
     # Tabs for different functionalities
     tab1, tab2 = st.tabs(["View Insights", "Unique Insights"])
@@ -212,6 +218,9 @@ def main():
         view_insights()
     with tab2:
         unique_insights()
+    
+
+    st.divider()
     
     st.markdown("Made by Ella and Asantewaa: We are just girls 👯‍♀️")
 
