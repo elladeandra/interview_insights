@@ -39,7 +39,7 @@ To run the Interview Insights Generator, follow these steps:
 
 2. **Navigate to the project directory**:
    ```bash
-   cd interview-insights-generator
+   cd interview_insights
    ```
 
 3. **Install the required dependencies**:
