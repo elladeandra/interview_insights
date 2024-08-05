@@ -1,6 +1,18 @@
 
 # Interview Insights Generator
 
+## Team Info
+This team is **Group 17**. The members are
+- Emmanuella Oteng Frimpong
+- Yaa Asantewaa Asante
+
+## Deployed App and Video
+*Link to Deployed App* : https://interviewinsights-84wurb9nkvmpwhqwxgc8di.streamlit.app/
+
+## Link to the Youtube video 
+https://youtu.be/i8HE3QlNCiU
+
+
 ## Overview
 The **Interview Insights Generator** is a powerful tool designed to assist talent acquisition professionals in analyzing interview transcripts. Utilizing advanced AI models, it generates detailed insights, evaluates candidate suitability, and provides recommendations for hiring decisions. This app processes audio files from various formats, converts them to text, and generates comprehensive reports based on the job description provided.
 
