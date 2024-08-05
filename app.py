@@ -212,6 +212,8 @@ def main():
         view_insights()
     with tab2:
         unique_insights()
+    
+    st.markdown("Made by Ella and Asantewaa: We are just girls 👯‍♀️")
 
 if __name__ == "__main__":
     main()
