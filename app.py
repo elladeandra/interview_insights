@@ -97,7 +97,7 @@ def ask_follow_up_question(transcript, question):
 def upload_or_link_audio():
     st.subheader("Upload Interview Audio or Provide a Link")
     
-    uploaded_file = st.file_uploader("Choose an audio file", type=["mp3", "wav", "m4a"])
+    uploaded_file = st.file_uploader("Choose an audio file", type=["mp3", "wav", "m4a", "flac", "ogg"])
     audio_link = st.text_input("Or provide a link to the audio file")
     
     if uploaded_file:
