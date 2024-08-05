@@ -6,8 +6,14 @@ import os
 import tempfile
 from io import BytesIO
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+os.environ["OPENAI_APIKEY"] = st.secrets["OPENAI_APIKEY"]
+
 # Set your OpenAI API key
-openai_api_key = 'sk-proj-Kh8kzZQ4d2T498diVP3VT3BlbkFJBncQ1pZCYc9zo5j9P8Hr'
+openai_api_key = os.getenv('OPENAI_APIKEY')
 client = OpenAI(api_key=openai_api_key)
 
 def transcribe_audio(file_path):
