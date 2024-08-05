@@ -1,3 +1,5 @@
+
+## Importing necessary libraries and an API 
 import streamlit as st
 from openai import OpenAI
 import requests
@@ -8,14 +10,19 @@ from io import BytesIO
 
 from dotenv import load_dotenv
 
+# Loading environment variables from a .env file
 load_dotenv()
 
+# Setting the OpenAI API key from Streamlit secrets
 os.environ["OPENAI_APIKEY"] = st.secrets["OPENAI_APIKEY"]
 
-# Set your OpenAI API key
+# Get OpenAI API key from environment variables
 openai_api_key = os.getenv('OPENAI_APIKEY')
+
+# Initialize OpenAI client with the API key
 client = OpenAI(api_key=openai_api_key)
 
+# This function is used to transcribe the audio using OpenAI's Whisper model
 def transcribe_audio(file_path):
     with open(file_path, "rb") as file:
         print("Audio file read")
@@ -26,6 +33,7 @@ def transcribe_audio(file_path):
         )
     return response
 
+# This function is used to download audio from a given URL
 def download_audio(url):
     headers = {
         "User-Agent": "InterviewAnalyzer/1.0 (emmanuella.oteng@ashesi.edu.gh) Script for educational purposes"
@@ -39,6 +47,7 @@ def download_audio(url):
     print(f"Downloaded audio file: {local_filename}")
     return local_filename
 
+# This function is used to convert audio to MP3 format using pydub
 def convert_audio_to_mp3(input_file_path):
     audio = AudioSegment.from_file(input_file_path)
     mp3_file = input_file_path.rsplit('.', 1)[0] + '.mp3'
@@ -46,6 +55,7 @@ def convert_audio_to_mp3(input_file_path):
     print(f"Converted audio file to MP3: {mp3_file}")
     return mp3_file
 
+# Function to generate insights from the interview transcript based on the job description
 def generate_insights(transcript, job_description):
     prompt = f"""You are a seasoned talent acquisition expert. Analyze the provided interview transcript to assess the candidate's suitability for the {job_description} position. 
                  Use the STAR (Situation, Task, Action, Result) method to evaluate their responses.
@@ -71,6 +81,7 @@ def generate_insights(transcript, job_description):
     )
     return response.choices[0].message.content
 
+# This function extracts unique insights from the interview transcript based on the job description
 def extract_unique_insights(transcript, job_description):
     response = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -82,6 +93,7 @@ def extract_unique_insights(transcript, job_description):
     )
     return response.choices[0].message.content
 
+# This function is to generate answers to follow-up questions based on the interview transcript
 def ask_follow_up_question(transcript, question):
     response = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -94,12 +106,14 @@ def ask_follow_up_question(transcript, question):
     )
     return response.choices[0].message.content
 
+# This is a streamlit function to upload audio files or provide a link to an audio file
 def upload_or_link_audio():
     st.subheader("Upload Interview Audio or Provide a Link")
     
     uploaded_file = st.file_uploader("Choose an audio file", type=["mp3", "wav", "m4a", "flac", "ogg"])
     audio_link = st.text_input("Or provide a link to the audio file")
     
+    # This creates a temporary file to store the uploaded audio
     if uploaded_file:
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
             temp_file.write(uploaded_file.getbuffer())
@@ -108,6 +122,7 @@ def upload_or_link_audio():
         # Convert the uploaded file to MP3 if necessary
         mp3_file_path = convert_audio_to_mp3(temp_file_path)
         
+        # This transcribes the audio and extracts unique insights
         with st.spinner("Transcribing audio..."):
             transcript_response = transcribe_audio(mp3_file_path)
             transcript = transcript_response
@@ -121,12 +136,15 @@ def upload_or_link_audio():
         
         st.success("Audio uploaded and transcribed successfully!")
     
+
     elif audio_link:
         try:
+            # Download and convert the audio file to MP3
             with st.spinner("Downloading audio..."):
                 audio_file_path = download_audio(audio_link)
                 mp3_file_path = convert_audio_to_mp3(audio_file_path)
             
+             # Transcribe the audio and extract unique insights
             with st.spinner("Transcribing audio..."):
                 transcript_response = transcribe_audio(mp3_file_path)
                 transcript = transcript_response
@@ -142,21 +160,26 @@ def upload_or_link_audio():
         except Exception as e:
             st.error(f"An error occurred: {e}")
 
+# This is a streamlit function to view the generated insights
 def view_insights():
     if 'transcript' in st.session_state and st.session_state.transcript:
         st.subheader("Generated Insights")
         job_description = st.session_state.job_description
         transcript = st.session_state.transcript
         
+         # Displays the transcripted audio
         with st.expander(f"### Transcript"):
             st.write(transcript[:500] + "...")
         st.divider()
+
+        # Generates and displays insights
         with st.spinner("Generating insights..."):
             insights = generate_insights(transcript, job_description)
             with st.expander("### Insights"):
                 st.write(insights)
             st.divider()
-            # Follow-up questions section
+            
+            # This section takes follow-up questions
             st.write("### Follow-up Questions")
             follow_up_question = st.text_input("Ask a follow-up question:")
             if follow_up_question:
@@ -168,6 +191,7 @@ def view_insights():
     else:
         st.text("Please upload audio files to view insights.")
 
+# This is a streamlit function to view unique insights
 def unique_insights():
     if 'unique_insights' in st.session_state and st.session_state.unique_insights:
         st.write("## Detailed Candidate Insights")
@@ -177,6 +201,7 @@ def unique_insights():
     else:
         st.text("No unique insights available. Please upload and transcribe audio files first.")
 
+# This is the main function to set up the Streamlit app layout and functionality
 def main():
     st.set_page_config(page_title="Interview Insights Generator", page_icon="💼", layout="wide")
     
@@ -222,7 +247,7 @@ def main():
 
     st.divider()
     
-    st.markdown("Made by Ella and Asantewaa: We are just girls 👯‍♀️")
+    st.markdown("Created and Presented to you by Ella and Asantewaa: We are girls in STEM 👯‍♀️")
 
 if __name__ == "__main__":
     main()
